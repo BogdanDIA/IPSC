@@ -4,7 +4,7 @@ HowTo:
 
 The dissector is to be included into wireshark as built-in:
 
-ete 1: Download and build sournoode of a stable version of wireshark from www.wireshark.com
+Step 1: Download and build sournoode of a stable version of wireshark from www.wireshark.com
 Step 2: Copy packet-ipsc.c to DIR/epan/dissectors/
 Step 3: Modify DIR/epan/dissectors/Makefile.common to include packet-ipsc.c
   ...

@@ -20,4 +20,4 @@
 - go to DIR and make && sudo make install
 
 ![alt text][logo]
-[logo]: https://github.com/BogdanDIA/IPSC/IPSC_screenshot.png "Wireshark IPSC"
+[logo]: https://github.com/BogdanDIA/IPSC/raw/master/IPSC_screenshot.png "Wireshark IPSC"

@@ -14,11 +14,11 @@ https://github.com/n0mjs710/IPSC
  packet-ipsc.c  
  packet-ipsi-ctl.c  
 
-- Add call to IPSC in generate.c  
+- Add call to IPSC in register.c  
 
  {extern void proto_register_ipsc (void); if(cb) (*cb)(RA_REGISTER, "proto_register_ipsc", client_data); proto_register_ipsc ();}
 
-- go to DIR and make && sudo make install
+- go to DIR and build and install: make && sudo make install
 
 ![alt text][logo]
 [logo]: https://github.com/BogdanDIA/IPSC/raw/master/IPSC_screenshot.png "Wireshark IPSC"

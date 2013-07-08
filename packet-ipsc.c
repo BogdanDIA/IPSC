@@ -78,6 +78,7 @@ static int hf_ipsc_sync_src_id = -1;
 static int hf_ipsc_data_type_voice_hdr_id = -1;
 static int hf_ipsc_rssi_threshold_and_parity_id = -1;
 static int hf_ipsc_length_to_follow_id = -1;
+static int hf_ipsc_length_to_follow2_id = -1;
 static int hf_ipsc_rssi_status_id = -1;
 static int hf_ipsc_slot_type_sync_id = -1;
 static int hf_ipsc_data_size_id = -1;
@@ -275,17 +276,100 @@ dissect_GROUP_VOICE(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
     ipsc_item = proto_tree_add_item(tree, proto_ipsc, tvb, 0, -1, ENC_NA);
     ipsc_tree = proto_item_add_subtree(ipsc_item, ett_ipsc);
 
+    guint16 length_to_follow = 0;
+
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
 
-    /* SRC_ID */
+    /* RPT_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
 
-    /* Unk 51 Byte */
-    proto_tree_add_item(ipsc_tree, hf_ipsc_unk1_id, tvb, 5, 51, ENC_BIG_ENDIAN);
+    /* SEQ NO */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_seq_no_id, tvb, 5, 1, ENC_BIG_ENDIAN);
 
-    /* Auth Digest */
-    proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 56, 10, ENC_BIG_ENDIAN);
+    /* Src Id */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_src_id, tvb, 6, 3, ENC_BIG_ENDIAN);
+
+    /* Dst Id */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_dst_id, tvb, 9, 3, ENC_BIG_ENDIAN);
+
+    /* Prio V/D */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_prio_v_d_id, tvb, 12, 1, ENC_BIG_ENDIAN);
+
+    /* Call Ctrl */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_id, tvb, 13, 4, ENC_BIG_ENDIAN);
+
+    /* Call Ctrl Info */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_info_id, tvb, 17, 1, ENC_BIG_ENDIAN);
+
+    /* Call Ctrl Src */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_src_id, tvb, 18, 1, ENC_BIG_ENDIAN);
+
+    /* Payload Type */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_payload_type_id, tvb, 19, 1, ENC_BIG_ENDIAN);
+
+    /* Call Seq No */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_call_seq_no_id, tvb, 20, 2, ENC_BIG_ENDIAN);
+
+    /* Timestamp */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_timestamp_id, tvb, 22, 4, ENC_BIG_ENDIAN);
+
+    /* Sync Src Id */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_sync_src_id, tvb, 26, 4, ENC_BIG_ENDIAN);
+
+    /* Data Type Voice Hdr */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_data_type_voice_hdr_id, tvb, 30, 1, ENC_BIG_ENDIAN);
+
+    /* TODO - Don't know what this is */
+    if ((0x0a == tvb_get_guint8(tvb, 30)) || (0x8a == tvb_get_guint8(tvb, 30)))
+    {
+      /* lengt to folow is in bytes */
+      length_to_follow = tvb_get_guint8(tvb, 31);
+
+      /* Length to Follow */
+      proto_tree_add_item(ipsc_tree, hf_ipsc_length_to_follow2_id, tvb, 31, 1, ENC_BIG_ENDIAN);
+
+      /* Data */
+      proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 32, length_to_follow, ENC_BIG_ENDIAN);
+
+      /* Auth Digest */
+      proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 32 + length_to_follow, 10, ENC_BIG_ENDIAN);
+    }
+    else
+    {
+      /* RSSI Threshold and Parity */
+      proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_threshold_and_parity_id, tvb, 31, 1, ENC_BIG_ENDIAN);
+
+      /* Length to Follow */
+      proto_tree_add_item(ipsc_tree, hf_ipsc_length_to_follow_id, tvb, 32, 2, ENC_BIG_ENDIAN);
+
+      /* 
+       * Decide how the rest of data looks like
+       * based on length_to_follow (words of 2 bytes each)
+       */
+      if (length_to_follow = tvb_get_ntohs(tvb, 32))
+      {
+        /* RSSI Status */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_status_id, tvb, 34, 1, ENC_BIG_ENDIAN);
+
+        /* Slot Type Sync */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_slot_type_sync_id, tvb, 35, 1, ENC_BIG_ENDIAN);
+
+        /* Data Size - in words of 2bytes*/
+        proto_tree_add_item(ipsc_tree, hf_ipsc_data_size_id, tvb, 36, 2, ENC_BIG_ENDIAN);
+
+        /* Data */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
+
+        /* Auth Digest */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 38 + (2 * length_to_follow - 4), 10, ENC_BIG_ENDIAN);
+      }
+      else
+      {
+        /* Auth Digest */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 34, 10, ENC_BIG_ENDIAN);
+      }
+    }
 }
 
 void
@@ -705,7 +789,11 @@ proto_register_ipsc(void)
     }
     ,
     { &hf_ipsc_length_to_follow_id, 
-      { "Length to Follow", "ipsc.length_to_follow", FT_UINT16, BASE_DEC, NULL, 0x0, NULL, HFILL }
+      { "Length to Follow - in 2byte words", "ipsc.length_to_follow", FT_UINT16, BASE_DEC, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_length_to_follow2_id, 
+      { "Length to Follow 2 - in bytes", "ipsc.length_to_follow2", FT_UINT8, BASE_DEC, NULL, 0x0, NULL, HFILL }
     }
     ,
     { &hf_ipsc_rssi_status_id, 

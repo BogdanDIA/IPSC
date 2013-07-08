@@ -636,11 +636,31 @@ proto_register_ipsc(void)
     "No"
   };
 
-
   static const true_false_string valstring_service_flags_master = {
     "Yes",
     "No"
   };
+
+  static const value_string valstring_data_type[] = {
+    { 0x00, "PI header" },
+    { 0x01, "Voice LC Header" },
+    { 0x02, "Terminator with LC" },
+    { 0x03, "CSBK" },
+    { 0x04, "MBC Header" },
+    { 0x05, "MBC Continuation" },
+    { 0x06, "Data Header" },
+    { 0x07, "Rate 1/2 Data" },
+    { 0x08, "Rate 3/4 Data" },
+    { 0x09, "Idle" },
+    { 0x0a, "Rate 1 Data" },
+    { 0x0b, "Reserved" },
+    { 0x0c, "Reserved" },
+    { 0x0d, "Reserved" },
+    { 0x0e, "Reserved" },
+    { 0x0f, "Reserved" },
+    { 0, NULL },
+  };
+
 
 
   static hf_register_info hf[] = {
@@ -781,7 +801,7 @@ proto_register_ipsc(void)
     }
     ,
     { &hf_ipsc_data_type_voice_hdr_id, 
-      { "Data Type Voice Hdr", "ipsc.data_type_voice_hdr", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+      { "Data Type Voice Hdr", "ipsc.data_type_voice_hdr", FT_UINT8, BASE_HEX, VALS(valstring_data_type), 0x0, NULL, HFILL }
     }
     ,
     { &hf_ipsc_rssi_threshold_and_parity_id, 

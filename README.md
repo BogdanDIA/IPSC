@@ -2,9 +2,9 @@
 **This is a wireshark dissector for IP Site Connect as it is presented in:**  
 https://github.com/n0mjs710/IPSC  
 https://github.com/KD8EYF/OpenIPSC  
-TS 192 361-1  
-TS 192 361-2  
-TS 192 361-3  
+TS 102 361-1  
+TS 102 361-2  
+TS 102 361-3  
 
 
 ###HowTo:

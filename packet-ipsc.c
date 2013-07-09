@@ -83,6 +83,8 @@ static int hf_ipsc_rssi_status_id = -1;
 static int hf_ipsc_slot_type_sync_id = -1;
 static int hf_ipsc_data_size_id = -1;
 static int hf_ipsc_data_id = -1;
+
+/* Data Header */
 static int hf_ipsc_data_hdr_byte1_id = -1;
 static int hf_ipsc_data_hdr_byte2_id = -1;
 static int hf_ipsc_data_hdr_dst_id = -1;
@@ -90,6 +92,16 @@ static int hf_ipsc_data_hdr_src_id = -1;
 static int hf_ipsc_data_hdr_byte8_id = -1;
 static int hf_ipsc_data_hdr_byte9_id = -1;
 static int hf_ipsc_data_hdr_crc_id = -1;
+
+/* CSBK Header */
+static int hf_ipsc_csbk_hdr_byte1_id = -1;
+static int hf_ipsc_csbk_hdr_fid_id = -1;
+static int hf_ipsc_csbk_hdr_byte3_id = -1;
+static int hf_ipsc_csbk_hdr_byte4_id = -1;
+static int hf_ipsc_csbk_hdr_dst_id = -1;
+static int hf_ipsc_csbk_hdr_src_id = -1;
+static int hf_ipsc_csbk_hdr_crc_id = -1;
+
 static int hf_ipsc_digest_id = -1;
 
 static int hf_ipsc_unk1_id = -1;
@@ -289,6 +301,27 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
         proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
 
         /* TODO - what is the rest of the bytes */
+      }
+      else if (tvb_get_guint8(tvb, 30) == 0x03)
+      {
+        /* CSBK header */
+        ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
+
+        /* CSBK Hdr Byte 1 */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+        /* CSBK Hdr FID */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_fid_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+        /* CSBK Byte 3 */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte3_id, tvb, 40, 1, ENC_BIG_ENDIAN);
+        /* CSBK Byte 4 */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte4_id, tvb, 41, 1, ENC_BIG_ENDIAN);
+        /* CSBK Dst */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_dst_id, tvb, 42, 3, ENC_BIG_ENDIAN);
+        /* CSBK Src */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_src_id, tvb, 45, 3, ENC_BIG_ENDIAN);
+        /* TODO - whatis the rest of the data to CRC? */
+        /* CSBK CRC */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
       }
 
       /* Auth Digest */
@@ -892,6 +925,34 @@ proto_register_ipsc(void)
     ,
     { &hf_ipsc_data_hdr_crc_id, 
       { "Data Hdr CRC", "ipsc.data_hdr_crc", FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_csbk_hdr_byte1_id, 
+      { "CSBK Hdr Byte 1", "ipsc.csbk_hdr_byte1", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_csbk_hdr_fid_id, 
+      { "CSBK Hdr FID", "ipsc.csbk_hdr_fid", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_csbk_hdr_byte3_id, 
+      { "CSBK Hdr Byte 3", "ipsc.csbk_hdr_byte3", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_csbk_hdr_byte4_id, 
+      { "CSBK Hdr Byte 4", "ipsc.csbk_hdr_byte4", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_csbk_hdr_dst_id, 
+      { "CSBK Hdr Dst", "ipsc.csbk_hdr_dst", FT_UINT24, BASE_DEC, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_csbk_hdr_src_id, 
+      { "CSBK Hdr Src", "ipsc.csbk_hdr_src", FT_UINT24, BASE_DEC, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_csbk_hdr_crc_id, 
+      { "CSBK Hdr CRC", "ipsc.csbk_hdr_crc", FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }
     }
     ,
     { &hf_ipsc_digest_id, 

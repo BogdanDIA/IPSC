@@ -83,6 +83,13 @@ static int hf_ipsc_rssi_status_id = -1;
 static int hf_ipsc_slot_type_sync_id = -1;
 static int hf_ipsc_data_size_id = -1;
 static int hf_ipsc_data_id = -1;
+static int hf_ipsc_data_hdr_byte1_id = -1;
+static int hf_ipsc_data_hdr_byte2_id = -1;
+static int hf_ipsc_data_hdr_dst_id = -1;
+static int hf_ipsc_data_hdr_src_id = -1;
+static int hf_ipsc_data_hdr_byte8_id = -1;
+static int hf_ipsc_data_hdr_byte9_id = -1;
+static int hf_ipsc_data_hdr_crc_id = -1;
 static int hf_ipsc_digest_id = -1;
 
 static int hf_ipsc_unk1_id = -1;
@@ -186,10 +193,10 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
     proto_item *ipsc_item = NULL;
     proto_tree *ipsc_tree = NULL;
 
+    guint16 length_to_follow = 0;
+
     ipsc_item = proto_tree_add_item(tree, proto_ipsc, tvb, 0, -1, ENC_NA);
     ipsc_tree = proto_item_add_subtree(ipsc_item, ett_ipsc);
-
-    guint16 length_to_follow = 0;
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
@@ -243,8 +250,12 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
      * Decide how the rest of data looks like
      * based on length_to_follow
      */
-    if (length_to_follow = tvb_get_ntohs(tvb, 32))
+    if ((length_to_follow = tvb_get_ntohs(tvb, 32)) != 0)
     {
+
+      proto_item *ipsc_data_item = NULL;
+      proto_tree *ipsc_data_tree = NULL;
+
       /* RSSI Status */
       proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_status_id, tvb, 34, 1, ENC_BIG_ENDIAN);
 
@@ -255,7 +266,30 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
       proto_tree_add_item(ipsc_tree, hf_ipsc_data_size_id, tvb, 36, 2, ENC_BIG_ENDIAN);
 
       /* Data */
-      proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
+      ipsc_data_item = proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
+
+      /* If Data Type is Data Header */
+      if (tvb_get_guint8(tvb, 30) == 0x06)
+      {
+        /* Add subtree */
+        ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
+        /* Data Hdr Byte 1 */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+        /* Data Hdr Byte 2 */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte2_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+        /* Data Hdr Dst */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_dst_id, tvb, 40, 3, ENC_BIG_ENDIAN);
+        /* Data Hdr Src */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_src_id, tvb, 43, 3, ENC_BIG_ENDIAN);
+        /* Data Hdr Byte 8 */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte8_id, tvb, 46, 1, ENC_BIG_ENDIAN);
+        /* Data Hdr Byte 9 */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte9_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+        /* Data Hdr CRC */
+        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
+
+        /* TODO - what is the rest of the bytes */
+      }
 
       /* Auth Digest */
       proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 38 + (2 * length_to_follow - 4), 10, ENC_BIG_ENDIAN);
@@ -273,10 +307,10 @@ dissect_GROUP_VOICE(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
     proto_item *ipsc_item = NULL;
     proto_tree *ipsc_tree = NULL;
 
+    guint16 length_to_follow = 0;
+
     ipsc_item = proto_tree_add_item(tree, proto_ipsc, tvb, 0, -1, ENC_NA);
     ipsc_tree = proto_item_add_subtree(ipsc_item, ett_ipsc);
-
-    guint16 length_to_follow = 0;
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
@@ -347,7 +381,7 @@ dissect_GROUP_VOICE(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
        * Decide how the rest of data looks like
        * based on length_to_follow (words of 2 bytes each)
        */
-      if (length_to_follow = tvb_get_ntohs(tvb, 32))
+      if ((length_to_follow = tvb_get_ntohs(tvb, 32)) != 0)
       {
         /* RSSI Status */
         proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_status_id, tvb, 34, 1, ENC_BIG_ENDIAN);
@@ -830,6 +864,34 @@ proto_register_ipsc(void)
     ,
     { &hf_ipsc_data_id, 
       { "Data", "ipsc.data", FT_BYTES, BASE_NONE, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte1_id, 
+      { "Data Hdr Byte 1", "ipsc.data_hdr_byte1", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte2_id, 
+      { "Data Hdr Byte 2", "ipsc.data_hdr_byte2", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_dst_id, 
+      { "Data Hdr Dst", "ipsc.data_hdr_dst", FT_UINT24, BASE_DEC, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_src_id, 
+      { "Data Hdr Src", "ipsc.data_hdr_src", FT_UINT24, BASE_DEC, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte8_id, 
+      { "Data Hdr Byte 8", "ipsc.data_hdr_byte8", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte9_id, 
+      { "Data Hdr Byte 9", "ipsc.data_hdr_byte9", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_crc_id, 
+      { "Data Hdr CRC", "ipsc.data_hdr_crc", FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }
     }
     ,
     { &hf_ipsc_digest_id, 

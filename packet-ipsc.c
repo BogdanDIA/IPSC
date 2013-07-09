@@ -39,6 +39,11 @@
 #include <epan/prefs.h>
 #include <epan/expert.h>
 
+/*
+ * TODO: Isolate L3 from L2 by making each
+ * as a function call.
+ */
+
 static int proto_ipsc = -1;
 
 static int hf_ipsc_type = -1;
@@ -101,6 +106,15 @@ static int hf_ipsc_csbk_hdr_byte4_id = -1;
 static int hf_ipsc_csbk_hdr_dst_id = -1;
 static int hf_ipsc_csbk_hdr_src_id = -1;
 static int hf_ipsc_csbk_hdr_crc_id = -1;
+
+/* Full LC*/
+static int hf_ipsc_full_lc_byte1_id = -1;
+static int hf_ipsc_full_lc_fid_id = -1;
+/* L3 Voice PDU */
+static int hf_ipsc_voice_pdu_service_options_id = -1;
+static int hf_ipsc_voice_pdu_dst_id = -1;
+static int hf_ipsc_voice_pdu_src_id = -1;
+
 
 static int hf_ipsc_digest_id = -1;
 
@@ -300,11 +314,11 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
         /* Data Hdr CRC */
         proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
 
-        /* TODO - what is the rest of the bytes */
+        /* TODO - what is the rest of the bytes (Data?) */
       }
       else if (tvb_get_guint8(tvb, 30) == 0x03)
       {
-        /* CSBK header */
+        /* If Data Type is CSBK header */
         ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
 
         /* CSBK Hdr Byte 1 */
@@ -360,7 +374,7 @@ dissect_GROUP_VOICE(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
     /* Dst Id */
     proto_tree_add_item(ipsc_tree, hf_ipsc_dst_id, tvb, 9, 3, ENC_BIG_ENDIAN);
 
-    /* Prio V/D */
+    /* Prio Video/Data */
     proto_tree_add_item(ipsc_tree, hf_ipsc_prio_v_d_id, tvb, 12, 1, ENC_BIG_ENDIAN);
 
     /* Call Ctrl */
@@ -402,8 +416,10 @@ dissect_GROUP_VOICE(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
       /* Auth Digest */
       proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 32 + length_to_follow, 10, ENC_BIG_ENDIAN);
     }
-    else
+    else if (0x01 == tvb_get_guint8(tvb, 30))
     {
+      /* If Voice LC Header */
+
       /* RSSI Threshold and Parity */
       proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_threshold_and_parity_id, tvb, 31, 1, ENC_BIG_ENDIAN);
 
@@ -416,17 +432,34 @@ dissect_GROUP_VOICE(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
        */
       if ((length_to_follow = tvb_get_ntohs(tvb, 32)) != 0)
       {
+        proto_item *ipsc_voice_item = NULL;
+        proto_tree *ipsc_voice_tree = NULL;
+
         /* RSSI Status */
         proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_status_id, tvb, 34, 1, ENC_BIG_ENDIAN);
 
         /* Slot Type Sync */
         proto_tree_add_item(ipsc_tree, hf_ipsc_slot_type_sync_id, tvb, 35, 1, ENC_BIG_ENDIAN);
 
-        /* Data Size - in words of 2bytes*/
+        /* Data Size - in words of 2bytes */
         proto_tree_add_item(ipsc_tree, hf_ipsc_data_size_id, tvb, 36, 2, ENC_BIG_ENDIAN);
 
-        /* Data */
-        proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
+        /* Full LC / Voice PDU */
+        ipsc_voice_item = proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
+        ipsc_voice_tree = proto_item_add_subtree(ipsc_voice_item, ett_ipsc);
+
+        /* Voice PDU Byte 1 */ 
+        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_full_lc_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+        /* Voice PDU FID */
+        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_full_lc_fid_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+        /* Voice PDU Service Options */
+        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_service_options_id, tvb, 40, 1, ENC_BIG_ENDIAN);
+        /* Voice PDU Dst */
+        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_dst_id, tvb, 41, 3, ENC_BIG_ENDIAN);
+        /* Voice PDU Rst */
+        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_src_id, tvb, 44, 3, ENC_BIG_ENDIAN);
+
+        /* TODO - Add rest of bytes - Data? */
 
         /* Auth Digest */
         proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 38 + (2 * length_to_follow - 4), 10, ENC_BIG_ENDIAN);
@@ -953,6 +986,26 @@ proto_register_ipsc(void)
     ,
     { &hf_ipsc_csbk_hdr_crc_id, 
       { "CSBK Hdr CRC", "ipsc.csbk_hdr_crc", FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_full_lc_byte1_id, 
+      { "Full LC Byte 1", "ipsc.full_lc_byte1", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_full_lc_fid_id, 
+      { "Full LC FID", "ipsc.full_lc_fid", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_voice_pdu_service_options_id, 
+      { "Voice PDU Service Options", "ipsc.voice_pdu_service_options", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_voice_pdu_dst_id, 
+      { "Voice PDU Dst", "ipsc.voice_pdu_dst", FT_UINT24, BASE_DEC, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_voice_pdu_src_id, 
+      { "Voice PDU Src", "ipsc.voice_pdu_src", FT_UINT24, BASE_DEC, NULL, 0x0, NULL, HFILL }
     }
     ,
     { &hf_ipsc_digest_id, 

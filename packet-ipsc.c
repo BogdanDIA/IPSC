@@ -136,10 +136,8 @@ dissect_short_messages(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
-
     /* SRC_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
-
     /* Auth Digest */
     proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 14, 10, ENC_BIG_ENDIAN);
 }
@@ -155,16 +153,12 @@ dissect_CALL_CTL_1(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
-
     /* SRC_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
-
     /* SRC_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 5, 4, ENC_BIG_ENDIAN);
-
     /* Unk_17_Byte */
     proto_tree_add_item(ipsc_tree, hf_ipsc_unk1_id, tvb, 9, 17, ENC_BIG_ENDIAN);
-
     /* Auth Digest */
     proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 26, 10, ENC_BIG_ENDIAN);
 }
@@ -180,13 +174,10 @@ dissect_CALL_CTL_2(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
-
     /* SRC_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
-
     /* Unk_2_Byte */
     proto_tree_add_item(ipsc_tree, hf_ipsc_unk1_id, tvb, 5, 2, ENC_BIG_ENDIAN);
-
     /* Auth Digest */
     proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 7, 10, ENC_BIG_ENDIAN);
 }
@@ -202,13 +193,10 @@ dissect_CALL_CTL_3(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
-
     /* SRC_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
-
     /* Unk 1 Byte */
     proto_tree_add_item(ipsc_tree, hf_ipsc_unk1_id, tvb, 5, 1, ENC_BIG_ENDIAN);
-
     /* Auth Digest */
     proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 6, 10, ENC_BIG_ENDIAN);
 }
@@ -226,49 +214,34 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
-
     /* RPT_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
-
     /* SEQ NO */
     proto_tree_add_item(ipsc_tree, hf_ipsc_seq_no_id, tvb, 5, 1, ENC_BIG_ENDIAN);
-
     /* Src Id */
     proto_tree_add_item(ipsc_tree, hf_ipsc_src_id, tvb, 6, 3, ENC_BIG_ENDIAN);
-
     /* Dst Id */
     proto_tree_add_item(ipsc_tree, hf_ipsc_dst_id, tvb, 9, 3, ENC_BIG_ENDIAN);
-
     /* Prio V/D */
     proto_tree_add_item(ipsc_tree, hf_ipsc_prio_v_d_id, tvb, 12, 1, ENC_BIG_ENDIAN);
-
     /* Call Ctrl */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_id, tvb, 13, 4, ENC_BIG_ENDIAN);
-
     /* Call Ctrl Info */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_info_id, tvb, 17, 1, ENC_BIG_ENDIAN);
-
     /* Call Ctrl Src */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_src_id, tvb, 18, 1, ENC_BIG_ENDIAN);
-
     /* Payload Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_payload_type_id, tvb, 19, 1, ENC_BIG_ENDIAN);
-
     /* Call Seq No */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_seq_no_id, tvb, 20, 2, ENC_BIG_ENDIAN);
-
     /* Timestamp */
     proto_tree_add_item(ipsc_tree, hf_ipsc_timestamp_id, tvb, 22, 4, ENC_BIG_ENDIAN);
-
     /* Sync Src Id */
     proto_tree_add_item(ipsc_tree, hf_ipsc_sync_src_id, tvb, 26, 4, ENC_BIG_ENDIAN);
-
     /* Data Type Voice Hdr */
     proto_tree_add_item(ipsc_tree, hf_ipsc_data_type_voice_hdr_id, tvb, 30, 1, ENC_BIG_ENDIAN);
-
     /* RSSI Threshold and Parity */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_threshold_and_parity_id, tvb, 31, 1, ENC_BIG_ENDIAN);
-
     /* Length to Follow */
     proto_tree_add_item(ipsc_tree, hf_ipsc_length_to_follow_id, tvb, 32, 2, ENC_BIG_ENDIAN);
 
@@ -282,60 +255,71 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
       proto_item *ipsc_data_item = NULL;
       proto_tree *ipsc_data_tree = NULL;
 
+      guint data_type = 0;
+
       /* RSSI Status */
       proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_status_id, tvb, 34, 1, ENC_BIG_ENDIAN);
-
       /* Slot Type Sync */
       proto_tree_add_item(ipsc_tree, hf_ipsc_slot_type_sync_id, tvb, 35, 1, ENC_BIG_ENDIAN);
-
       /* Data Size - in words of 2bytes*/
       proto_tree_add_item(ipsc_tree, hf_ipsc_data_size_id, tvb, 36, 2, ENC_BIG_ENDIAN);
-
       /* Data */
       ipsc_data_item = proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
+      /* Get Data Type */
+      data_type = tvb_get_guint8(tvb, 30) & 0x0f;
 
-      /* If Data Type is Data Header */
-      if (tvb_get_guint8(tvb, 30) == 0x06)
+      switch (data_type)
       {
-        /* Add subtree */
-        ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
-        /* Data Hdr Byte 1 */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
-        /* Data Hdr Byte 2 */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte2_id, tvb, 39, 1, ENC_BIG_ENDIAN);
-        /* Data Hdr Dst */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_dst_id, tvb, 40, 3, ENC_BIG_ENDIAN);
-        /* Data Hdr Src */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_src_id, tvb, 43, 3, ENC_BIG_ENDIAN);
-        /* Data Hdr Byte 8 */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte8_id, tvb, 46, 1, ENC_BIG_ENDIAN);
-        /* Data Hdr Byte 9 */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte9_id, tvb, 47, 1, ENC_BIG_ENDIAN);
-        /* Data Hdr CRC */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
+        case 0x03:
+        {
+          /* If Data Type is CSBK header */
+          ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
 
-        /* TODO - what is the rest of the bytes (Data?) */
-      }
-      else if (tvb_get_guint8(tvb, 30) == 0x03)
-      {
-        /* If Data Type is CSBK header */
-        ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
+          /* CSBK Hdr Byte 1 */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* CSBK Hdr FID */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_fid_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+          /* CSBK Byte 3 */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte3_id, tvb, 40, 1, ENC_BIG_ENDIAN);
+          /* CSBK Byte 4 */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte4_id, tvb, 41, 1, ENC_BIG_ENDIAN);
+          /* CSBK Dst */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_dst_id, tvb, 42, 3, ENC_BIG_ENDIAN);
+          /* CSBK Src */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_src_id, tvb, 45, 3, ENC_BIG_ENDIAN);
+          /* TODO - whatis the rest of the data to CRC? */
+          /* CSBK CRC */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
 
-        /* CSBK Hdr Byte 1 */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
-        /* CSBK Hdr FID */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_fid_id, tvb, 39, 1, ENC_BIG_ENDIAN);
-        /* CSBK Byte 3 */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte3_id, tvb, 40, 1, ENC_BIG_ENDIAN);
-        /* CSBK Byte 4 */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_byte4_id, tvb, 41, 1, ENC_BIG_ENDIAN);
-        /* CSBK Dst */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_dst_id, tvb, 42, 3, ENC_BIG_ENDIAN);
-        /* CSBK Src */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_src_id, tvb, 45, 3, ENC_BIG_ENDIAN);
-        /* TODO - whatis the rest of the data to CRC? */
-        /* CSBK CRC */
-        proto_tree_add_item(ipsc_data_tree, hf_ipsc_csbk_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
+        }; break;
+
+        case 0x06:
+        {
+          /* If Data Type is Data Header */
+
+          /* Add subtree */
+          ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
+          /* Data Hdr Byte 1 */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* Data Hdr Byte 2 */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte2_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+          /* Data Hdr Dst */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_dst_id, tvb, 40, 3, ENC_BIG_ENDIAN);
+          /* Data Hdr Src */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_src_id, tvb, 43, 3, ENC_BIG_ENDIAN);
+          /* Data Hdr Byte 8 */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte8_id, tvb, 46, 1, ENC_BIG_ENDIAN);
+          /* Data Hdr Byte 9 */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte9_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+          /* Data Hdr CRC */
+          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
+
+          /* TODO - what is the rest of the bytes (Data?) */
+
+        }; break;
+
+        default:
+          break;
       }
 
       /* Auth Digest */
@@ -355,119 +339,111 @@ dissect_GROUP_VOICE(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
     proto_tree *ipsc_tree = NULL;
 
     guint16 length_to_follow = 0;
+    guint data_type = 0;
 
     ipsc_item = proto_tree_add_item(tree, proto_ipsc, tvb, 0, -1, ENC_NA);
     ipsc_tree = proto_item_add_subtree(ipsc_item, ett_ipsc);
 
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
-
     /* RPT_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
-
     /* SEQ NO */
     proto_tree_add_item(ipsc_tree, hf_ipsc_seq_no_id, tvb, 5, 1, ENC_BIG_ENDIAN);
-
     /* Src Id */
     proto_tree_add_item(ipsc_tree, hf_ipsc_src_id, tvb, 6, 3, ENC_BIG_ENDIAN);
-
     /* Dst Id */
     proto_tree_add_item(ipsc_tree, hf_ipsc_dst_id, tvb, 9, 3, ENC_BIG_ENDIAN);
-
     /* Prio Video/Data */
     proto_tree_add_item(ipsc_tree, hf_ipsc_prio_v_d_id, tvb, 12, 1, ENC_BIG_ENDIAN);
-
     /* Call Ctrl */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_id, tvb, 13, 4, ENC_BIG_ENDIAN);
-
     /* Call Ctrl Info */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_info_id, tvb, 17, 1, ENC_BIG_ENDIAN);
-
     /* Call Ctrl Src */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_ctrl_src_id, tvb, 18, 1, ENC_BIG_ENDIAN);
-
     /* Payload Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_payload_type_id, tvb, 19, 1, ENC_BIG_ENDIAN);
-
     /* Call Seq No */
     proto_tree_add_item(ipsc_tree, hf_ipsc_call_seq_no_id, tvb, 20, 2, ENC_BIG_ENDIAN);
-
     /* Timestamp */
     proto_tree_add_item(ipsc_tree, hf_ipsc_timestamp_id, tvb, 22, 4, ENC_BIG_ENDIAN);
-
     /* Sync Src Id */
     proto_tree_add_item(ipsc_tree, hf_ipsc_sync_src_id, tvb, 26, 4, ENC_BIG_ENDIAN);
-
     /* Data Type Voice Hdr */
     proto_tree_add_item(ipsc_tree, hf_ipsc_data_type_voice_hdr_id, tvb, 30, 1, ENC_BIG_ENDIAN);
+    /* Get Data Type */
+    data_type = tvb_get_guint8(tvb, 30) & 0xf;
 
-    /* TODO - Don't know what this is */
-    if ((0x0a == tvb_get_guint8(tvb, 30)) || (0x8a == tvb_get_guint8(tvb, 30)))
+    switch (data_type)
     {
-      /* lengt to folow is in bytes */
-      length_to_follow = tvb_get_guint8(tvb, 31);
-
-      /* Length to Follow */
-      proto_tree_add_item(ipsc_tree, hf_ipsc_length_to_follow2_id, tvb, 31, 1, ENC_BIG_ENDIAN);
-
-      /* Data */
-      proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 32, length_to_follow, ENC_BIG_ENDIAN);
-
-      /* Auth Digest */
-      proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 32 + length_to_follow, 10, ENC_BIG_ENDIAN);
-    }
-    else if (0x01 == tvb_get_guint8(tvb, 30))
-    {
-      /* If Voice LC Header */
-
-      /* RSSI Threshold and Parity */
-      proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_threshold_and_parity_id, tvb, 31, 1, ENC_BIG_ENDIAN);
-
-      /* Length to Follow */
-      proto_tree_add_item(ipsc_tree, hf_ipsc_length_to_follow_id, tvb, 32, 2, ENC_BIG_ENDIAN);
-
-      /* 
-       * Decide how the rest of data looks like
-       * based on length_to_follow (words of 2 bytes each)
-       */
-      if ((length_to_follow = tvb_get_ntohs(tvb, 32)) != 0)
+      case 0x01:
+        /* Voice LC Header */
+      case 0x02:
       {
-        proto_item *ipsc_voice_item = NULL;
-        proto_tree *ipsc_voice_tree = NULL;
+        /* Voice LC Termination Header */
 
-        /* RSSI Status */
-        proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_status_id, tvb, 34, 1, ENC_BIG_ENDIAN);
+        /* RSSI Threshold and Parity */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_threshold_and_parity_id, tvb, 31, 1, ENC_BIG_ENDIAN);
+        /* Length to Follow */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_length_to_follow_id, tvb, 32, 2, ENC_BIG_ENDIAN);
 
-        /* Slot Type Sync */
-        proto_tree_add_item(ipsc_tree, hf_ipsc_slot_type_sync_id, tvb, 35, 1, ENC_BIG_ENDIAN);
+        /* 
+        * Decide how the rest of data looks like
+        * based on length_to_follow (words of 2 bytes each)
+        */
+        if ((length_to_follow = tvb_get_ntohs(tvb, 32)) != 0)
+        {
+          proto_item *ipsc_voice_item = NULL;
+          proto_tree *ipsc_voice_tree = NULL;
 
-        /* Data Size - in words of 2bytes */
-        proto_tree_add_item(ipsc_tree, hf_ipsc_data_size_id, tvb, 36, 2, ENC_BIG_ENDIAN);
+          /* RSSI Status */
+          proto_tree_add_item(ipsc_tree, hf_ipsc_rssi_status_id, tvb, 34, 1, ENC_BIG_ENDIAN);
+          /* Slot Type Sync */
+          proto_tree_add_item(ipsc_tree, hf_ipsc_slot_type_sync_id, tvb, 35, 1, ENC_BIG_ENDIAN);
+          /* Data Size - in words of 2bytes */
+          proto_tree_add_item(ipsc_tree, hf_ipsc_data_size_id, tvb, 36, 2, ENC_BIG_ENDIAN);
+          /* Full LC / Voice PDU */
+          ipsc_voice_item = proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
+          ipsc_voice_tree = proto_item_add_subtree(ipsc_voice_item, ett_ipsc);
+          /* Voice PDU Byte 1 */ 
+          proto_tree_add_item(ipsc_voice_tree, hf_ipsc_full_lc_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* Voice PDU FID */
+          proto_tree_add_item(ipsc_voice_tree, hf_ipsc_full_lc_fid_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+          /* Voice PDU Service Options */
+          proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_service_options_id, tvb, 40, 1, ENC_BIG_ENDIAN);
+          /* Voice PDU Dst */
+          proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_dst_id, tvb, 41, 3, ENC_BIG_ENDIAN);
+          /* Voice PDU Rst */
+          proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_src_id, tvb, 44, 3, ENC_BIG_ENDIAN);
 
-        /* Full LC / Voice PDU */
-        ipsc_voice_item = proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 38, 2 * length_to_follow - 4, ENC_BIG_ENDIAN);
-        ipsc_voice_tree = proto_item_add_subtree(ipsc_voice_item, ett_ipsc);
+          /* TODO - Add rest of bytes - Data? */
 
-        /* Voice PDU Byte 1 */ 
-        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_full_lc_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
-        /* Voice PDU FID */
-        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_full_lc_fid_id, tvb, 39, 1, ENC_BIG_ENDIAN);
-        /* Voice PDU Service Options */
-        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_service_options_id, tvb, 40, 1, ENC_BIG_ENDIAN);
-        /* Voice PDU Dst */
-        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_dst_id, tvb, 41, 3, ENC_BIG_ENDIAN);
-        /* Voice PDU Rst */
-        proto_tree_add_item(ipsc_voice_tree, hf_ipsc_voice_pdu_src_id, tvb, 44, 3, ENC_BIG_ENDIAN);
+          /* Auth Digest */
+          proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 38 + (2 * length_to_follow - 4), 10, ENC_BIG_ENDIAN);
+        }
 
-        /* TODO - Add rest of bytes - Data? */
+      }; break;
 
+      case 0x0a:
+      {
+        /* Rate 1 data */
+
+        /* length to folow is in bytes */
+        length_to_follow = tvb_get_guint8(tvb, 31);
+        /* Length to Follow */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_length_to_follow2_id, tvb, 31, 1, ENC_BIG_ENDIAN);
+        /* Data */
+        proto_tree_add_item(ipsc_tree, hf_ipsc_data_id, tvb, 32, length_to_follow, ENC_BIG_ENDIAN);
         /* Auth Digest */
-        proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 38 + (2 * length_to_follow - 4), 10, ENC_BIG_ENDIAN);
-      }
-      else
+        proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 32 + length_to_follow, 10, ENC_BIG_ENDIAN);
+
+      }; break;
+
+      default:
       {
         /* Auth Digest */
-        proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 34, 10, ENC_BIG_ENDIAN);
+        proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 30, 10, ENC_BIG_ENDIAN);
       }
     }
 }
@@ -647,7 +623,6 @@ dissect_ipsc(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
       default:
         ;
     }
-
   }
 }
 

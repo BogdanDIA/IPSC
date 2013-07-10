@@ -90,12 +90,47 @@ static int hf_ipsc_data_size_id = -1;
 static int hf_ipsc_data_id = -1;
 
 /* Data Header */
+/* Byte 1 */
 static int hf_ipsc_data_hdr_byte1_id = -1;
+static int hf_ipsc_data_hdr_byte1_gi_id = -1;
+static int hf_ipsc_data_hdr_byte1_a_id = -1;
+static int hf_ipsc_data_hdr_byte1_hc_id = -1;
+static int hf_ipsc_data_hdr_byte1_pocmsb_id = -1;
+static int hf_ipsc_data_hdr_byte1_sap_id = -1;
+static int hf_ipsc_data_hdr_byte1_dpf_id = -1;
+static int hf_ipsc_data_hdr_byte1_ab_id = -1;
+/* Byte 2 */
 static int hf_ipsc_data_hdr_byte2_id = -1;
+static int hf_ipsc_data_hdr_byte2_sap_id = -1;
+static int hf_ipsc_data_hdr_byte2_poc_id = -1;
+static int hf_ipsc_data_hdr_byte2_udt_format_id = -1;
+/* Src and Dst */
 static int hf_ipsc_data_hdr_dst_id = -1;
 static int hf_ipsc_data_hdr_src_id = -1;
+/* Byte 8 */
 static int hf_ipsc_data_hdr_byte8_id = -1;
+static int hf_ipsc_data_hdr_byte8_f_id = -1;
+static int hf_ipsc_data_hdr_byte8_btf_id = -1;
+static int hf_ipsc_data_hdr_byte8_sp_id = -1;
+static int hf_ipsc_data_hdr_byte8_dp_id = -1;
+static int hf_ipsc_data_hdr_byte8_dd_format_id = -1;
+static int hf_ipsc_data_hdr_byte8_s_id = -1;
+static int hf_ipsc_data_hdr_byte8_pad_nibble_id = -1;
+static int hf_ipsc_data_hdr_byte8_uab_id = -1;
+/* Byte 9 */
 static int hf_ipsc_data_hdr_byte9_id = -1;
+static int hf_ipsc_data_hdr_byte9_class_id = -1;
+static int hf_ipsc_data_hdr_byte9_type_id = -1;
+static int hf_ipsc_data_hdr_byte9_status_id = -1;
+static int hf_ipsc_data_hdr_byte9_s_id = -1;
+static int hf_ipsc_data_hdr_byte9_ns_id = -1;
+static int hf_ipsc_data_hdr_byte9_fsn_id = -1;
+static int hf_ipsc_data_hdr_byte9_status_precoded_id = -1;
+static int hf_ipsc_data_hdr_byte9_bit_padding_id = -1;
+static int hf_ipsc_data_hdr_byte9_sf_id = -1;
+static int hf_ipsc_data_hdr_byte9_pf_id = -1;
+static int hf_ipsc_data_hdr_byte9_udto_id = -1;
+/* CRC */
 static int hf_ipsc_data_hdr_crc_id = -1;
 
 /* CSBK Header */
@@ -268,11 +303,12 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
       /* Get Data Type */
       data_type = tvb_get_guint8(tvb, 30) & 0x0f;
 
+      /* Header based on Data Type */
       switch (data_type)
       {
+        /* Data Type is CSBK header */
         case 0x03:
         {
-          /* If Data Type is CSBK header */
           ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
 
           /* CSBK Hdr Byte 1 */
@@ -293,24 +329,71 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
 
         }; break;
 
+        /* If Data Type is Data Header */
         case 0x06:
         {
-          /* If Data Type is Data Header */
+          proto_item *byte1_item = NULL;
+          proto_tree *byte1_tree = NULL;
+          proto_item *byte2_item = NULL;
+          proto_tree *byte2_tree = NULL;
+          proto_item *byte8_item = NULL;
+          proto_tree *byte8_tree = NULL;
+          proto_item *byte9_item = NULL;
+          proto_tree *byte9_tree = NULL;
 
-          /* Add subtree */
+          /* Add subtree for Data Header */
           ipsc_data_tree = proto_item_add_subtree(ipsc_data_item, ett_ipsc);
+
           /* Data Hdr Byte 1 */
-          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          byte1_item = proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte1_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* Add subtree for Byte 1 */
+          byte1_tree = proto_item_add_subtree(byte1_item, ett_ipsc);
+          /* Byte 1 G/I */
+          proto_tree_add_item(byte1_tree, hf_ipsc_data_hdr_byte1_gi_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* Byte 1 A */
+          proto_tree_add_item(byte1_tree, hf_ipsc_data_hdr_byte1_a_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* Byte 1 HC */
+          proto_tree_add_item(byte1_tree, hf_ipsc_data_hdr_byte1_hc_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* Byte 1 POCMSB */
+          proto_tree_add_item(byte1_tree, hf_ipsc_data_hdr_byte1_pocmsb_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+          /* Byte 1 DPF */
+          proto_tree_add_item(byte1_tree, hf_ipsc_data_hdr_byte1_dpf_id, tvb, 38, 1, ENC_BIG_ENDIAN);
+
           /* Data Hdr Byte 2 */
-          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte2_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+          byte2_item = proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte2_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+          /* Add subtree for Byte 2 */
+          byte2_tree = proto_item_add_subtree(byte2_item, ett_ipsc);
+          /* Byte 2 SAP */
+          proto_tree_add_item(byte2_tree, hf_ipsc_data_hdr_byte2_sap_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+          /* Byte 2 POC */
+          proto_tree_add_item(byte2_tree, hf_ipsc_data_hdr_byte2_poc_id, tvb, 39, 1, ENC_BIG_ENDIAN);
+
           /* Data Hdr Dst */
           proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_dst_id, tvb, 40, 3, ENC_BIG_ENDIAN);
           /* Data Hdr Src */
           proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_src_id, tvb, 43, 3, ENC_BIG_ENDIAN);
+
           /* Data Hdr Byte 8 */
-          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte8_id, tvb, 46, 1, ENC_BIG_ENDIAN);
+          byte8_item = proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte8_id, tvb, 46, 1, ENC_BIG_ENDIAN);
+          /* Add tree for Byte 8 */
+          byte8_tree = proto_item_add_subtree(byte8_item, ett_ipsc);
+          /* Byte 8 F */
+          proto_tree_add_item(byte8_tree, hf_ipsc_data_hdr_byte8_f_id, tvb, 46, 1, ENC_BIG_ENDIAN);
+          /* Byte 8 BTF */
+          proto_tree_add_item(byte8_tree, hf_ipsc_data_hdr_byte8_btf_id, tvb, 46, 1, ENC_BIG_ENDIAN);
+
           /* Data Hdr Byte 9 */
-          proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte9_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+          byte9_item = proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte9_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+          /* Add tree for Byte 9 */
+          byte9_tree = proto_item_add_subtree(byte9_item, ett_ipsc);
+          /* Byte 9 S */
+          proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_s_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+          /* Byte 9 N(S) */
+          proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_ns_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+          /* Byte 9 FSN */
+          proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_fsn_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+
+
           /* Data Hdr CRC */
           proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
 
@@ -678,13 +761,19 @@ proto_register_ipsc(void)
 
   static const true_false_string valstring_service_flags_rdac = {
     "RDAC call",
-    "Not a RADAC call"
+    "Not a RDAC call"
   };
 
   static const true_false_string valstring_service_flags_unk1 = {
     "1",
     "0"
   };
+
+  static const true_false_string valstring_one_zero = {
+    "1",
+    "0"
+  };
+
 
   static const true_false_string valstring_service_flags_3rdpy = {
     "3rd Party App",
@@ -736,6 +825,36 @@ proto_register_ipsc(void)
     { 0, NULL },
   };
 
+  static const value_string valstring_data_packet_format[] = {
+    { 0x0, "Unified Data Transport (UTD)" },
+    { 0x1, "Response Packet" },
+    { 0x2, "Data packet with unconfirmed delivery" },
+    { 0x3, "Data packet with confirmed delivery" },
+    { 0xd, "Short Data: Defined" },
+    { 0xe, "Short Data: Raw or Status/Precoded " },
+    { 0xf, "Proprietary Data Packet" },
+    { 0, NULL },
+  };
+
+  static const value_string valstring_service_access_point[] = {
+    { 0x0, "Unified Data Transport (UDT)" },
+    { 0x1, "Reserved" },
+    { 0x2, "TCP/IP header compression" },
+    { 0x3, "UDP/IP header compression" },
+    { 0x4, "IP based Packet data" },
+    { 0x5, "Address Resolution Protocol (ARP)" },
+    { 0x6, "Reserved" },
+    { 0x7, "Reserved" },
+    { 0x8, "Reserved" },
+    { 0x9, "Proprietary Packet data" },
+    { 0xa, "Short Data" },
+    { 0xb, "Reserved" },
+    { 0xc, "Reserved" },
+    { 0xd, "Reserved" },
+    { 0xe, "Reserved" },
+    { 0xf, "Reserved" },
+    { 0x0, NULL}
+  };
 
 
   static hf_register_info hf[] = {
@@ -911,8 +1030,36 @@ proto_register_ipsc(void)
       { "Data Hdr Byte 1", "ipsc.data_hdr_byte1", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
     }
     ,
+    { &hf_ipsc_data_hdr_byte1_gi_id, 
+      { "Group / Individual call", "ipsc.data_hdr.byte1_gi", FT_BOOLEAN, 8, NULL, 0x80, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte1_a_id, 
+      { "Acknowledge requested", "ipsc.data_hdr.byte1_a", FT_BOOLEAN, 8, NULL, 0x40, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte1_hc_id, 
+      { "Header Compression (HC)", "ipsc.data_hdr.byte1_hc", FT_BOOLEAN, 8, NULL, 0x20, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte1_pocmsb_id, 
+      { "Packet Octet Count(POC) MSB", "ipsc.data_hdr.byte1_pocmsb", FT_BOOLEAN, 8, NULL, 0x10, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte1_dpf_id, 
+      { "Data Packet Format (DPF)", "ipsc.data_hdr.byte1_dpf", FT_UINT8, BASE_HEX, VALS(valstring_data_packet_format), 0x0f, NULL, HFILL }
+    }
+    ,
     { &hf_ipsc_data_hdr_byte2_id, 
       { "Data Hdr Byte 2", "ipsc.data_hdr_byte2", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte2_sap_id, 
+      { "Service Access Point (SAP)", "ipsc.data_hdr.byte2_sap", FT_UINT8, BASE_HEX, VALS(valstring_service_access_point), 0xf0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte2_poc_id, 
+      { "Packet Octet Count (POC)", "ipsc.data_hdr.byte2_poc", FT_UINT8, BASE_DEC, NULL, 0x0f, NULL, HFILL }
     }
     ,
     { &hf_ipsc_data_hdr_dst_id, 
@@ -927,9 +1074,30 @@ proto_register_ipsc(void)
       { "Data Hdr Byte 8", "ipsc.data_hdr_byte8", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
     }
     ,
+    { &hf_ipsc_data_hdr_byte8_f_id, 
+      { "Full Message Flag (F)", "ipsc.data_hdr.byte8_f", FT_BOOLEAN, 8, NULL, 0x80, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte8_btf_id, 
+      { "Blocks to Follow (BF)", "ipsc.data_hdr.byte8_btf", FT_UINT8, BASE_DEC, NULL, 0x7f, NULL, HFILL }
+    }
+    ,
     { &hf_ipsc_data_hdr_byte9_id, 
       { "Data Hdr Byte 9", "ipsc.data_hdr_byte9", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
     }
+    ,
+    { &hf_ipsc_data_hdr_byte9_s_id, 
+      { "Re-Synchronize flag (S)", "ipsc.data_hdr_byte9_s", FT_BOOLEAN, 8, NULL, 0x80, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte9_ns_id, 
+      { "Send sequence Number N(S)", "ipsc.data_hdr_byte9_ns", FT_UINT8, BASE_DEC, NULL, 0x70, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte9_fsn_id, 
+      { "Fragment Sequence Number (FSN)", "ipsc.data_hdr_byte9_fsn", FT_UINT8, BASE_DEC, NULL, 0x0f, NULL, HFILL }
+    }
+
     ,
     { &hf_ipsc_data_hdr_crc_id, 
       { "Data Hdr CRC", "ipsc.data_hdr_crc", FT_UINT16, BASE_HEX, NULL, 0x0, NULL, HFILL }

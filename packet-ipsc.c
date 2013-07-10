@@ -130,6 +130,7 @@ static int hf_ipsc_data_hdr_byte9_bit_padding_id = -1;
 static int hf_ipsc_data_hdr_byte9_sf_id = -1;
 static int hf_ipsc_data_hdr_byte9_pf_id = -1;
 static int hf_ipsc_data_hdr_byte9_udto_id = -1;
+static int hf_ipsc_data_hdr_byte9_nibble1_id = -1;
 /* CRC */
 static int hf_ipsc_data_hdr_crc_id = -1;
 
@@ -386,13 +387,23 @@ dissect_PVT_DATA(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
           byte9_item = proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_byte9_id, tvb, 47, 1, ENC_BIG_ENDIAN);
           /* Add tree for Byte 9 */
           byte9_tree = proto_item_add_subtree(byte9_item, ett_ipsc);
-          /* Byte 9 S */
-          proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_s_id, tvb, 47, 1, ENC_BIG_ENDIAN);
-          /* Byte 9 N(S) */
-          proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_ns_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+
+          /* If Confirmed header */
+          if (tvb_get_guint8(tvb, 38) & 0x40)
+          {
+            /* Byte 9 S */
+            proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_s_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+            /* Byte 9 N(S) */
+            proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_ns_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+          }
+          else
+          {
+            /* Add data in the first nibble */
+            proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_nibble1_id, tvb, 47, 1, ENC_BIG_ENDIAN);
+          }
+
           /* Byte 9 FSN */
           proto_tree_add_item(byte9_tree, hf_ipsc_data_hdr_byte9_fsn_id, tvb, 47, 1, ENC_BIG_ENDIAN);
-
 
           /* Data Hdr CRC */
           proto_tree_add_item(ipsc_data_tree, hf_ipsc_data_hdr_crc_id, tvb, 48, 2, ENC_BIG_ENDIAN);
@@ -1096,6 +1107,10 @@ proto_register_ipsc(void)
     ,
     { &hf_ipsc_data_hdr_byte9_fsn_id, 
       { "Fragment Sequence Number (FSN)", "ipsc.data_hdr_byte9_fsn", FT_UINT8, BASE_DEC, NULL, 0x0f, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_data_hdr_byte9_nibble1_id, 
+      { "Nibble1", "ipsc.data_hdr_byte9_nibble1", FT_UINT8, BASE_DEC, NULL, 0xf0, NULL, HFILL }
     }
 
     ,

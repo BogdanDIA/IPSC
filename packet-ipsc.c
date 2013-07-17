@@ -62,10 +62,12 @@ static int hf_ipsc_service_flags_byte3_unk1_id = -1;
 static int hf_ipsc_service_flags_byte3_3rdpy_id = -1;
 static int hf_ipsc_service_flags_byte3_unk2_id = -1;
 static int hf_ipsc_service_flags_byte4_id = -1;
-static int hf_ipsc_service_flags_byte4_unk1_id = -1;
+static int hf_ipsc_service_flags_byte4_xnl_conn_id = -1;
+static int hf_ipsc_service_flags_byte4_xnl_master_id = -1;
+static int hf_ipsc_service_flags_byte4_xnl_slave_id = -1;
 static int hf_ipsc_service_flags_byte4_auth_id = -1;
-static int hf_ipsc_service_flags_byte4_voice_id = -1;
 static int hf_ipsc_service_flags_byte4_data_id = -1;
+static int hf_ipsc_service_flags_byte4_voice_id = -1;
 static int hf_ipsc_service_flags_byte4_unk2_id = -1;
 static int hf_ipsc_service_flags_byte4_master_id = -1;
 static int hf_ipsc_version_id = -1;
@@ -643,8 +645,12 @@ dissect_long_messages(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
     /* Service FLAGS Byte 4 */
     ipsc_service_flags_byte4_item = proto_tree_add_item(ipsc_service_flags_tree, hf_ipsc_service_flags_byte4_id, tvb, 9, 1, ENC_BIG_ENDIAN);
     ipsc_service_flags_byte4_tree = proto_item_add_subtree(ipsc_service_flags_byte4_item, ett_ipsc);
-    /* Service FLAGS Byte 4 - Unk1 */
-    proto_tree_add_item(ipsc_service_flags_byte4_tree, hf_ipsc_service_flags_byte4_unk1_id, tvb, 9, 1, ENC_BIG_ENDIAN);
+    /* Service FLAGS Byte 4 - XNL Connected */
+    proto_tree_add_item(ipsc_service_flags_byte4_tree, hf_ipsc_service_flags_byte4_xnl_conn_id, tvb, 9, 1, ENC_BIG_ENDIAN);
+    /* Service FLAGS Byte 4 - XNL Master Device */
+    proto_tree_add_item(ipsc_service_flags_byte4_tree, hf_ipsc_service_flags_byte4_xnl_master_id, tvb, 9, 1, ENC_BIG_ENDIAN);
+    /* Service FLAGS Byte 4 - XNL Slave Device */
+    proto_tree_add_item(ipsc_service_flags_byte4_tree, hf_ipsc_service_flags_byte4_xnl_slave_id, tvb, 9, 1, ENC_BIG_ENDIAN);
     /* Service FLAGS Byte 4 - Authenticated packets */
     proto_tree_add_item(ipsc_service_flags_byte4_tree, hf_ipsc_service_flags_byte4_auth_id, tvb, 9, 1, ENC_BIG_ENDIAN);
     /* Service FLAGS Byte 4 - Voice calls supported */
@@ -775,7 +781,7 @@ proto_register_ipsc(void)
     "Not a RDAC call"
   };
 
-  static const true_false_string valstring_service_flags_unk1 = {
+  static const true_false_string valstring_service_flags_rpt_call_mon = {
     "1",
     "0"
   };
@@ -787,8 +793,8 @@ proto_register_ipsc(void)
 
 
   static const true_false_string valstring_service_flags_3rdpy = {
-    "3rd Party App",
-    "Not a 3rd Party App"
+    "3rd Party Console App",
+    "Not a 3rd Party Console App"
   };
 
   static const true_false_string valstring_service_flags_auth = {
@@ -914,11 +920,11 @@ proto_register_ipsc(void)
     }
     ,
     { &hf_ipsc_service_flags_byte3_rdac_id, 
-      { "RDAC call", "ipsc.service_flags.byte3.rdac", FT_BOOLEAN, 8, TFS(&valstring_service_flags_rdac), 0x80, NULL, HFILL }
+      { "CSBK message", "ipsc.service_flags.byte3.csbk", FT_BOOLEAN, 8, NULL, 0x80, NULL, HFILL }
     }
     ,
     { &hf_ipsc_service_flags_byte3_unk1_id, 
-      { "Unk1", "ipsc.service_flags.byte3.unk1", FT_BOOLEAN, 8, TFS(&valstring_service_flags_unk1), 0x40, NULL, HFILL }
+      { "Repeater call monitoring", "ipsc.service_flags.byte3.rpt_call_mon", FT_BOOLEAN, 8, TFS(&valstring_service_flags_rpt_call_mon), 0x40, NULL, HFILL }
     }
     ,
     { &hf_ipsc_service_flags_byte3_3rdpy_id, 
@@ -933,8 +939,16 @@ proto_register_ipsc(void)
       { "BYTE 4", "ipsc.service_flags.byte4", FT_UINT8, BASE_HEX, NULL, 0x0, NULL, HFILL }
     }
     ,
-    { &hf_ipsc_service_flags_byte4_unk1_id, 
-      { "Unk 1", "ipsc.service_flags.byte4.unk1", FT_UINT8, BASE_HEX, NULL, 0xe0, NULL, HFILL }
+    { &hf_ipsc_service_flags_byte4_xnl_conn_id, 
+      { "XNL connected", "ipsc.service_flags.byte4.xnl_conn", FT_BOOLEAN, 8, NULL, 0x80, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_service_flags_byte4_xnl_master_id, 
+      { "XNL Master Device", "ipsc.service_flags.byte4.xnl_master", FT_BOOLEAN, 8, NULL, 0x40, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_service_flags_byte4_xnl_slave_id, 
+      { "XNL Slave Device", "ipsc.service_flags.byte4.xnl_slave", FT_BOOLEAN, 8, NULL, 0x20, NULL, HFILL }
     }
     ,
     { &hf_ipsc_service_flags_byte4_auth_id, 

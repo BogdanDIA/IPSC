@@ -156,6 +156,10 @@ static int hf_ipsc_voice_pdu_src_id = -1;
 
 static int hf_ipsc_digest_id = -1;
 
+/* XCMP/XNL */
+static int hf_ipsc_xcmp_xnl_length_id = -1;
+static int hf_ipsc_xcmp_xnl_data_id = -1;
+
 static int hf_ipsc_unk1_id = -1;
 
 static gint ett_ipsc = -1;
@@ -550,21 +554,24 @@ dissect_XCMP_XNL(tvbuff_t *tvb, packet_info *pinfo, proto_tree *tree)
     proto_item *ipsc_item = NULL;
     proto_tree *ipsc_tree = NULL;
 
+    guint16 data_len = NULL;
+
     ipsc_item = proto_tree_add_item(tree, proto_ipsc, tvb, 0, -1, ENC_NA);
     ipsc_tree = proto_item_add_subtree(ipsc_item, ett_ipsc);
 
+
     /* Type */
     proto_tree_add_item(ipsc_tree, hf_ipsc_type, tvb, 0, 1, ENC_BIG_ENDIAN);
-
     /* SRC_ID */
     proto_tree_add_item(ipsc_tree, hf_ipsc_rpt_id, tvb, 1, 4, ENC_BIG_ENDIAN);
-
-    /* Unk 28 Byte */
-    /* There seems to be messages of various lengths */
-    proto_tree_add_item(ipsc_tree, hf_ipsc_unk1_id, tvb, 5, 28, ENC_BIG_ENDIAN);
-
+    /* XCMP/XNL Length */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_xcmp_xnl_length_id, tvb, 5, 2, ENC_BIG_ENDIAN);
+    /* Keep Data Len */
+    data_len = tvb_get_ntohs(tvb, 5);
+    /* XCMP/XNL Data */
+    proto_tree_add_item(ipsc_tree, hf_ipsc_xcmp_xnl_data_id, tvb, 7, data_len, ENC_BIG_ENDIAN);
     /* Auth Digest */
-    proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 23, 10, ENC_BIG_ENDIAN);
+    proto_tree_add_item(ipsc_tree, hf_ipsc_digest_id, tvb, 7 + data_len, 10, ENC_BIG_ENDIAN);
 }
 
 
@@ -1182,6 +1189,14 @@ proto_register_ipsc(void)
     ,
     { &hf_ipsc_digest_id, 
       { "Auth Digest", "ipsc.digest", FT_BYTES, BASE_NONE, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_xcmp_xnl_length_id, 
+      { "XCMP/XNL Length", "ipsc.xcmp_xnl_length", FT_UINT16, BASE_DEC, NULL, 0x0, NULL, HFILL }
+    }
+    ,
+    { &hf_ipsc_xcmp_xnl_data_id, 
+      { "XCMP/XNL Data", "ipsc.xcmp_xnl_data", FT_BYTES, BASE_NONE, NULL, 0x0, NULL, HFILL }
     }
     ,
     { &hf_ipsc_unk1_id, 

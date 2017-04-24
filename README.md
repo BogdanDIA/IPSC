@@ -1,4 +1,4 @@
-##PROJECT: MotoTRB IPSC dissector
+## PROJECT: MotoTRB IPSC dissector
 **This is a wireshark dissector for IP Site Connect as it is presented in:**  
 https://github.com/n0mjs710/IPSC  
 TS 102 361-1  
@@ -6,7 +6,7 @@ TS 102 361-2
 TS 102 361-3  
 
 
-###HowTo:
+### HowTo:
 
 **IPSC dissector in wireshark:**
 
